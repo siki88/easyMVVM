@@ -20,6 +20,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
 //        budu volat rootViewControlle
         let rootViewController = RootViewController()
+//        add user
+        let user = User(name: "SIKI", age: 31, backgroundColor: UIColor(red: 0/255, green: 206/255, blue: 24/255, alpha: 1.0))
+        let rootViewModel = RootViewModel(user: user)
+        rootViewController.viewModel = rootViewModel
 //        add navigation bar
         let navigationController = UINavigationController(rootViewController: rootViewController)
         window?.rootViewController = navigationController

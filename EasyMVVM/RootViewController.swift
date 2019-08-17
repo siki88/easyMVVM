@@ -26,8 +26,6 @@ class RootViewController: UIViewController {
 //    Proměnné můžete odkazovat bez ohledu na to, zda použijete uzávěrku.
 //    lazy var iOSResumeDescription = “I am an iOS developer”
     
-    
-    
     lazy var label: UILabel = {
         let label = UILabel()
         label.text = "Tap to fetch to receive the message"
@@ -47,8 +45,10 @@ class RootViewController: UIViewController {
         setupNavigation()
         setupViews()
         
-        let user = User(name: "SIKI", age: 31, backgroundColor: UIColor(red: 0/255, green: 206/255, blue: 24/255, alpha: 1.0))
-        viewModel = RootViewModel(user: user)
+//        let user = User(name: "SIKI", age: 31, backgroundColor: UIColor(red: 0/255, green: 206/255, blue: 24/255, alpha: 1.0))
+//        viewModel = RootViewModel(user: user)
+        
+        viewModel.rootViewModelDelegate = self
     }
     
     
@@ -71,25 +71,25 @@ class RootViewController: UIViewController {
         print("click reset")
         
         
-        
+//        hlavní vlákno
         DispatchQueue.main.async {
-            Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false, block: { timer in
-                print("go to fire 1")
+            Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false, block: { timer in
+                print("go to fire 5 second")
             })
         }
-        
-        DispatchQueue.main.async { [weak self] in
-            Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false, block: { timer in
-                print("go to fire 2")
-            })
-        }
-        
-        
-        defer {
-            Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false, block: { timer in
-                print("go to fire 3")
-            })
-        }
+//
+//        DispatchQueue.main.async { [weak self] in
+//            Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false, block: { timer in
+//                print("go to fire 2")
+//            })
+//        }
+//
+//        volá jako poslední
+//        defer {
+//            Timer.scheduledTimer(withTimeInterval: 10.0, repeats: false, block: { timer in
+//                print("go to fire 3")
+//            })
+//        }
         
         
         print("hello world")
@@ -98,25 +98,25 @@ class RootViewController: UIViewController {
     
     
     
-    
     @objc fileprivate func fetchBarButtonItemTapped(){
+        
         print("click fetch")
-        activityIndicator.startAnimating()
-        
-        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false, block: { timer in
-            print("go to fire two func")
-        })
-        
-        Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(fire), userInfo: nil, repeats: false)
 
+//        MARK: calling fetchMessage func on RootViewModel
+        viewModel.fetchMessage()
+        
+//        Timer.scheduledTimer(timeInterval: 5.0, target: self, selector: #selector(fire), userInfo: nil, repeats: false)
+
+//        DispatchQueueHelper.delay(bySeconds: 3.0, dispatchLevel: .background){
+//        }
         
     }
     
-        @objc fileprivate func fire(){
-            print("go to fire func")
-            self.label.text = "MY EXAMPLE CODE"
-            self.activityIndicator.stopAnimating()
-        }
+//        @objc fileprivate func fire(){
+//            print("go to fire func")
+//            self.label.text = "MY EXAMPLE CODE"
+//            self.activityIndicator.stopAnimating()
+//        }
     
     fileprivate func setupViews(){
         view.backgroundColor = .white
@@ -126,7 +126,8 @@ class RootViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        activityIndicator.center = view.center
+        activityIndicator.center.y = view.center.y + 30
+        activityIndicator.center.x = view.center.x
         activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
         activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
         
@@ -134,5 +135,18 @@ class RootViewController: UIViewController {
     }
 
 
+}
+
+extension RootViewController: RootViewModelDelegate {
+    func didStartFetchingMessage(_ message: String?) {
+        label.text = message
+        activityIndicator.startAnimating()
+    }
+    
+    func didFinishFetchingMessage(_ message: String?) {
+        label.text = message
+        activityIndicator.stopAnimating()
+    }
+    
 }
 
